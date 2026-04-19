@@ -18,8 +18,6 @@
 
 namespace Rml {
 
-namespace {
-
 static bool IsEscapedCharacter(const String& string, size_t index)
 {
 	if (index == 0 || index > string.size())
@@ -116,8 +114,6 @@ static void ParseAttributeSelector(AttributeSelector& attribute, const String& r
 	attribute.value = UnescapeSelectorToken(value);
 	// TODO: CSS attribute selectors accept more complete escape semantics than this simplified unescaping.
 }
-
-} // namespace
 
 class AbstractPropertyParser : NonCopyMoveable {
 protected:
