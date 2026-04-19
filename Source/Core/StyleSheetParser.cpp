@@ -639,7 +639,7 @@ bool StyleSheetParser::Parse(MediaBlockList& style_sheets, Stream* _stream, int 
 					// Add style nodes to the root of the tree
 					for (size_t i = 0; i < rule_name_list.size(); i++)
 					{
-						auto source = MakeShared<PropertySource>(stream_file_name, rule_line_number, rule_name_list[i]);
+						auto source = MakeShared<PropertySource>(stream_file_name, rule_line_number, UnescapeSelectorToken(rule_name_list[i]));
 						properties.SetSourceOfAllProperties(source);
 						if (!ImportProperties(current_block.stylesheet->root.get(), rule_name_list[i], properties, rule_count))
 						{
@@ -842,25 +842,7 @@ StyleSheetNodeListRaw StyleSheetParser::ConstructNodes(StyleSheetNode& root_node
 	const PropertyDictionary empty_properties;
 
 	StringList selector_list;
-	{
-		int parenthesis_count = 0;
-		size_t token_begin = 0;
-		for (size_t index = 0; index < selectors.size(); index++)
-		{
-			const char c = selectors[index];
-			if (c == '(' && !IsEscapedCharacter(selectors, index))
-				parenthesis_count += 1;
-			else if (c == ')' && !IsEscapedCharacter(selectors, index))
-				parenthesis_count -= 1;
-			else if (c == ',' && parenthesis_count == 0 && !IsEscapedCharacter(selectors, index))
-			{
-				selector_list.push_back(StringUtilities::StripWhitespace(selectors.substr(token_begin, index - token_begin)));
-				token_begin = index + 1;
-			}
-		}
-
-		selector_list.push_back(StringUtilities::StripWhitespace(selectors.substr(token_begin)));
-	}
+	StringUtilities::ExpandString(selector_list, selectors, ',', '(', ')');
 
 	StyleSheetNodeListRaw leaf_nodes;
 
