@@ -40,7 +40,6 @@ static String UnescapeSelectorToken(StringView token)
 		const char c = *p;
 		if (c == '\\' && (p + 1) != token.end())
 		{
-			// TODO: Implement CSS unicode and hex escape handling in selectors.
 			result += *(p + 1);
 			++p;
 		}
@@ -112,7 +111,6 @@ static void ParseAttributeSelector(AttributeSelector& attribute, const String& r
 		value = value.substr(1, value.size() - 2);
 
 	attribute.value = UnescapeSelectorToken(value);
-	// TODO: CSS attribute selectors accept more complete escape semantics than this simplified unescaping.
 }
 
 class AbstractPropertyParser : NonCopyMoveable {
@@ -863,7 +861,6 @@ StyleSheetNodeListRaw StyleSheetParser::ConstructNodes(StyleSheetNode& root_node
 
 		selector_list.push_back(StringUtilities::StripWhitespace(selectors.substr(token_begin)));
 	}
-	// TODO: Handle unicode and hex escapes while splitting selector lists.
 
 	StyleSheetNodeListRaw leaf_nodes;
 
